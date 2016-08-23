@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <title>drawinggg</title>
+
+  </head>
+  <body>
+
+
+    <canvas id="my-canvas" width="800" height="500"></canvas>
+    <input id='clearBtn' type="button" value="Clear all"/>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/script.js"></script>
+    <script>
+
+      var socket = io();
+      var $canvas = $('#my-canvas');
+    	var canvas = $canvas[0];
+
+
+      $canvas.mousedown(function(e){
+
+        socket.emit('update drawing', undoStack);
+        return false;
+      });
+
+      $canvas.mousemove(function(e){
+        if(!paint)
+    			return;
+
+        socket.emit('update drawing', undoStack);
+        return false;
+      });
+
+      socket.on('clear all', function(stack){
+        stack = [];
+        clearStack(stack);
+        draw(stack);
+        return false;
+      });
+
+      $clearBtn.on('click', function(e) {
+        socket.emit('clear all', undoStack);
+    	});
+
+      socket.on('update drawing', function(stack){
+        undoStack =  stack;
+        draw(undoStack);
+      });
+
+
+    </script>
+  </body>
+</html>
